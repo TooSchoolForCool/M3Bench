@@ -47,9 +47,7 @@ The dataset is organized as following:
 ```
 
 where 
-
 - `robot_urdf/` contains the URDF model of the robot.
-
 - `scene_urdf/<physcene_xxx>/` contains the URDF asset of the scene, and `physcene_xxx` is the ID of the scene.
 - `pick/<physcene_xxx>/<object_linkname>` contains all the `pick` tasks related to object `<object_linkname>` in the scene `<physcene_xxx>`.
 - `.../<instance-id>/vkc_request.json` is the planning request configuration for the VKC motion planner to plan for solution. 
