@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools >= 68.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tongverse-dev-2023"
+dynamic = ['version']
+requires-python = ">=3.10"
+dependencies = [
+    "importlib-metadata==7.0.1",
+    "pandas==2.2.0",
+    "requests",
+    "scipy",
+    "tqdm==4.66.2",
+    "grpcio==1.60.1",
+    "flask==2.2.5",
+    "flask-socketio==5.3.6",
+    "opencv-python==4.8.1.78",
+    "apscheduler==3.10.4",
+    "toml",
+    "pykinect_azure==0.0.3"
+]
+
+[project.optional-dependencies]
+dev = [
+    "mkdocs==1.2.4",
+    "mkdocs-autorefs",
+    "mkdocs-material==8.2.7",
+    "mkdocstrings[python]",
+    "ruff==0.2.2",
+    "flake8==7.0.0",
+    "pylint==3.0.3",
+    "pre-commit==3.6.1",
+]
+character = ["pykinect_azure"]
+
+
+[tool.setuptools.packages.find]
+include = ["tongverse*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "tongverse.__version__" }
+
+
+[tool.ruff]
+lint.select = ["E", "F", "PL", "B", "N", "I"]
+lint.ignore = ["PLR0913"]
+extend-exclude = ["*_pb2.py", "*_grpc.py"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.pylint]
+max-line-length = 88
+max-public-methods = 25
+disable = [
+    "C0114",
+    "C0115",
+    "C0116",
+    "R0902",
+    "R0903",
+    "R0904",
+    "R0913",
+    "R0914",
+    "W0511",
+]
+ignored-modules = "omni,omni.isaac,omni.kit,pxr,torch,PIL,carb"
+variable-rgx = "[a-z_][a-z0-9_]*$"
+good-names = ['i', 'j', 'k', 'ex', 'Run', '_', 'dt']
+
+[tool.pylint.MASTER]
+ignore-patterns = ".*_pb2.py,.*_grpc.py"
+
+[tool.black]
+exclude = '''
+(
+    .*_pb2.py
+    | .*_grpc.py
+
+    | build
+)
+'''
+
+[tool.isort]
+py_version = 310
+profile = "black"
+
+add_imports = "from __future__ import annotations"
+
+src_paths = ["tongverse"]
+extend_skip_glob = ['tongverse/test/*']
+filter_files = true

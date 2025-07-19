@@ -1,0 +1,73 @@
+# task: Pick
+name: pick
+agent: MecKinova
+type: 'pick' # ['pick', 'place', 'goal-reach]
+lr: 1e-4
+
+train:
+  data_type: MKPointCloudInstanceDataset # [MKPointCloudInstanceDataset, MKPointCloudTrajectoryDataset]
+  batch_size: 128
+  num_epochs: 100
+  checkpoint_interval: 10
+  validation_interval: 5000 # training is slow if it's too small
+
+val:
+  data_type: MKPointCloudTrajectoryDataset # [MKPointCloudInstanceDataset, MKPointCloudTrajectoryDataset]
+  batch_size: ${task.train.batch_size}
+
+test:
+  data_type: MKPointCloudTrajectoryDataset # [MKPointCloudInstanceDataset, MKPointCloudTrajectoryDataset]
+  batch_size: 1 
+
+## datamodule
+has_observation: true # for motion policy, use observation in default
+datamodule:
+  name: MKMotionPolicyDataModule
+  desc: '[MecKinova Motion Policy Data Module] -- data module used for Meckinova motion policy conditioned on 3D situated scene'
+  task: ${task.type} #! 根据具体情况修改
+  num_workers: 4
+  train_batch_size: ${task.train.batch_size}
+  val_batch_size: ${task.val.batch_size}
+  test_batch_size: ${task.test.batch_size}
+  use_color: true
+  use_normal: false
+  data_dir: /your_path/data/${task.type} #! 需要修改为自己的数据路径
+  data_dir_slurm: /home/sixuyan/data/${task.type}/ #! 没有则不需要
+  scene_model_name: ${model.scene_model.name}
+  num_scene_points: 4096
+  num_agent_points: 1024
+  num_object_points: 512
+  num_placement_area_points: 512
+  num_target_points: 512
+  dataset:
+    trajectory_key: 'vkc'
+    context_length: ${eval:'None'}
+    max_timestep: ${eval:'None'}
+    task_type: ${task.type}
+    train_data_type: ${task.train.data_type}
+    val_data_type: ${task.val.data_type}
+    test_data_type: ${task.test.data_type}
+    num_scene_points: ${task.datamodule.num_scene_points}
+    num_agent_points: ${task.datamodule.num_agent_points}
+    num_object_points: ${task.datamodule.num_object_points}
+    num_placement_area_points: ${task.datamodule.num_placement_area_points}
+    num_target_points: ${task.datamodule.num_target_points}
+    random_scale: 0.01
+    use_normalize: true
+    train_transforms: ['NormalizePolicyData', 'NumpyToTensor']
+    val_transforms: ['NormalizePolicyData', 'NumpyToTensor']
+    test_transforms: ['NormalizePolicyData', 'NumpyToTensor']
+    transform_cfg:
+      gravity_dim: 2
+
+environment:
+  name: MKMotionPolicyEnv
+  eval: true
+  # NOTE: we do not recommend using an sim gui because it is very slow to visualize the point of collision
+  sim_gui: true # whether to enable simulation visualization
+  viz: true
+  viz_frame: 'world_frame' # ['world_frame', 'agent_initial_frame']
+  viz_type: 'mesh' # ['mesh', 'point_cloud']
+  viz_time: 5 # number of trajectory visualized
+  save: true
+  save_dir: ./results/${task.name}/${now:%Y-%m-%d-%H-%M-%S}

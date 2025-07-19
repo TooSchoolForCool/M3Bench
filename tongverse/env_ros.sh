@@ -1,0 +1,2 @@
+export SCENE_BUILDER_ROOT=$HOME/catkin_ws/src/scene_builder
+export ROS_PACKAGE_PATH=$SCENE_BUILDER_ROOT:$ROS_PACKAGE_PATH
