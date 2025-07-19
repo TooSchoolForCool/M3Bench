@@ -55,7 +55,7 @@ where
 - `.../<instance-id>/config.json` is the task configuration file which contains the link name of the target object, and the initial pose of the target object, and the initial position of the robot.
 - `.../<instance-id>/trajectory/pick_vkc_caption_trajectory.json` contains the joint trajectory that accomplish this task instance, and the language description of the task.
 
-## ## 2. Evaluation Protocol
+## 2. Evaluation Protocol
 
 Our evaluation program consists of two phases:
 
